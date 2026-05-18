@@ -176,8 +176,14 @@ status: published
 3. 感情設計（冒頭・中盤・末尾）を決める
 4. タイトル候補を4構造で各2本ずつ計8本生成して最良を選ぶ
 5. 使用する学術分野（3〜5つ）を選定する
-6. 執筆する（5,000〜10,000字）
-7. `content/articles/YYYY-MM-DD-slug.md` として保存する
+6. **WebSearch で関連論文・文献を検索する（最低3件）**
+   - 検索先: Google Scholar, PubMed, ResearchGate
+   - WebFetch でアブストラクトを取得して著者名・発表年を確認
+7. **使用する実例・事例を選定する（最低1件）**
+8. 執筆する（5,000〜10,000字）― 末尾に「参考文献」セクションを追加
+9. `content/articles/YYYY-MM-DD-slug.md` として保存する
+
+> context7 は技術ライブラリのドキュメント専用のため学術論文の検索には使用しない。論文検索は必ず WebSearch + WebFetch を使う。
 
 ---
 
