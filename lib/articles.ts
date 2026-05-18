@@ -90,7 +90,5 @@ export function getAllTags(): string[] {
 }
 
 export function getArticlesByCategory(category: string): ArticleMeta[] {
-  return getAllArticles().filter(
-    (a) => a.category === decodeURIComponent(category)
-  );
+  return getAllArticles().filter((a) => a.category === category);
 }

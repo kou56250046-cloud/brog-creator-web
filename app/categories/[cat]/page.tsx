@@ -5,27 +5,25 @@ import CategoryPageClient from "@/components/CategoryPageClient";
 type Params = { params: Promise<{ cat: string }> };
 
 export async function generateStaticParams() {
-  return getCategories().map((cat) => ({ cat: encodeURIComponent(cat) }));
+  return getCategories().map((cat) => ({ cat }));
 }
 
 export async function generateMetadata({ params }: Params): Promise<Metadata> {
   const { cat } = await params;
-  const decoded = decodeURIComponent(cat);
   return {
-    title: decoded,
-    description: `「${decoded}」カテゴリーの記事一覧`,
+    title: cat,
+    description: `「${cat}」カテゴリーの記事一覧`,
   };
 }
 
 export default async function CategoryPage({ params }: Params) {
   const { cat } = await params;
-  const decoded = decodeURIComponent(cat);
-  const articles = getArticlesByCategory(decoded);
+  const articles = getArticlesByCategory(cat);
   const categories = getCategories();
 
   return (
     <CategoryPageClient
-      category={decoded}
+      category={cat}
       articles={articles}
       categories={categories}
     />
