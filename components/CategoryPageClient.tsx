@@ -2,16 +2,14 @@
 
 import { motion } from "framer-motion";
 import ArticleCard from "@/components/ArticleCard";
-import CategoryFilter from "@/components/CategoryFilter";
 import type { ArticleMeta } from "@/lib/articles";
 
 type Props = {
   category: string;
   articles: ArticleMeta[];
-  categories: string[];
 };
 
-export default function CategoryPageClient({ category, articles, categories }: Props) {
+export default function CategoryPageClient({ category, articles }: Props) {
   return (
     <div className="max-w-4xl mx-auto px-4 py-12">
       <motion.div
@@ -30,8 +28,6 @@ export default function CategoryPageClient({ category, articles, categories }: P
           {articles.length} 件の記事
         </p>
       </motion.div>
-
-      <CategoryFilter categories={categories} active={category} />
 
       {articles.length === 0 ? (
         <p className="text-center py-16" style={{ color: "var(--muted)" }}>

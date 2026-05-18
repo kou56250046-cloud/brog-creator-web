@@ -19,13 +19,11 @@ export async function generateMetadata({ params }: Params): Promise<Metadata> {
 export default async function CategoryPage({ params }: Params) {
   const { cat } = await params;
   const articles = getArticlesByCategory(cat);
-  const categories = getCategories();
 
   return (
     <CategoryPageClient
       category={cat}
       articles={articles}
-      categories={categories}
     />
   );
 }

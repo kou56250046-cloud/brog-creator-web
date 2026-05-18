@@ -2,15 +2,13 @@
 
 import { motion } from "framer-motion";
 import ArticleCard from "@/components/ArticleCard";
-import CategoryFilter from "@/components/CategoryFilter";
 import type { ArticleMeta } from "@/lib/articles";
 
 type Props = {
   articles: ArticleMeta[];
-  categories: string[];
 };
 
-export default function HomeClient({ articles, categories }: Props) {
+export default function HomeClient({ articles }: Props) {
   return (
     <div className="max-w-4xl mx-auto px-4 py-12">
       {/* Hero */}
@@ -34,9 +32,6 @@ export default function HomeClient({ articles, categories }: Props) {
           style={{ background: "var(--accent)" }}
         />
       </motion.div>
-
-      {/* Category filter */}
-      <CategoryFilter categories={categories} />
 
       {/* Articles */}
       {articles.length === 0 ? (
