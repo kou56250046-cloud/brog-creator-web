@@ -25,7 +25,7 @@ export default function RootLayout({
 }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="ja" className="h-full">
-      <body className="min-h-full flex flex-col" style={{ background: "var(--bg)", color: "var(--fg)" }}>
+      <body className="min-h-full flex flex-col" style={{ background: "var(--dark-bg)", color: "var(--fg)" }}>
         <Header />
         <main className="flex-1">{children}</main>
         <Footer />
