@@ -14,7 +14,7 @@ type Props = {
 
 export default function ArticlePageClient({ article, html, related }: Props) {
   return (
-    <div className="max-w-2xl mx-auto px-4 py-12">
+    <div className="max-w-2xl mx-auto px-4 py-12" style={{ background: "var(--bg)", color: "var(--fg)" }}>
       {/* Breadcrumb */}
       <motion.nav
         initial={{ opacity: 0 }}
