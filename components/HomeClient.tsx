@@ -1,6 +1,7 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import ArticleCard from "@/components/ArticleCard";
 import type { ArticleMeta } from "@/lib/articles";
 
@@ -38,11 +39,7 @@ const CATEGORIES = [
   "人間関係",
   "習慣・行動",
   "健康・睡眠",
-  "お金・経済",
-  "仕事・キャリア",
-  "社会・思想",
   "祈り・神霊・生き方",
-  "自然共鳴",
   "見えない現象の論理",
 ];
 
@@ -65,6 +62,11 @@ const CONCEPTS = [
 ];
 
 export default function HomeClient({ articles }: Props) {
+  const [activeCategory, setActiveCategory] = useState<string | null>(null);
+  const filtered = activeCategory
+    ? articles.filter((a) => a.category === activeCategory)
+    : articles;
+
   return (
     <div>
       {/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -237,6 +239,41 @@ export default function HomeClient({ articles }: Props) {
             />
           </div>
 
+          {/* カテゴリフィルタータブ */}
+          <motion.div
+            initial={{ opacity: 0, y: 12 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5 }}
+            className="flex flex-wrap gap-2 mb-10"
+          >
+            <button
+              onClick={() => setActiveCategory(null)}
+              className="px-4 py-1.5 rounded-full text-sm font-medium border transition-all"
+              style={
+                activeCategory === null
+                  ? { background: "var(--accent)", color: "#fff", borderColor: "var(--accent)" }
+                  : { background: "transparent", color: "var(--muted)", borderColor: "var(--border)" }
+              }
+            >
+              すべて
+            </button>
+            {CATEGORIES.map((cat) => (
+              <button
+                key={cat}
+                onClick={() => setActiveCategory(cat === activeCategory ? null : cat)}
+                className="px-4 py-1.5 rounded-full text-sm font-medium border transition-all hover:border-[var(--accent)] hover:text-[var(--accent)]"
+                style={
+                  activeCategory === cat
+                    ? { background: "var(--accent)", color: "#fff", borderColor: "var(--accent)" }
+                    : { background: "transparent", color: "var(--muted)", borderColor: "var(--border)" }
+                }
+              >
+                {cat}
+              </button>
+            ))}
+          </motion.div>
+
           {/* 記事グリッド */}
           {articles.length === 0 ? (
             <motion.div
@@ -249,12 +286,31 @@ export default function HomeClient({ articles }: Props) {
               <p className="text-lg mb-2">まだ記事がありません</p>
               <p className="text-sm">チャットで最初の記事を作成しましょう</p>
             </motion.div>
+          ) : filtered.length === 0 ? (
+            <motion.div
+              key="empty"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              className="text-center py-24"
+              style={{ color: "var(--muted)" }}
+            >
+              <p className="text-sm">このカテゴリの記事はまだありません</p>
+            </motion.div>
           ) : (
-            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-              {articles.map((article, i) => (
-                <ArticleCard key={article.slug} article={article} index={i} />
-              ))}
-            </div>
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={activeCategory ?? "all"}
+                initial={{ opacity: 0, y: 12 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -8 }}
+                transition={{ duration: 0.3 }}
+                className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3"
+              >
+                {filtered.map((article, i) => (
+                  <ArticleCard key={article.slug} article={article} index={i} />
+                ))}
+              </motion.div>
+            </AnimatePresence>
           )}
         </div>
       </section>
