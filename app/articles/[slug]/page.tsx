@@ -1,9 +1,8 @@
-import { getArticleHtml, getAllArticles, getArticleSlugs } from "@/lib/articles";
+import { getArticleHtml, getAllArticles, getArticleSlugs, getArticlesBySeries } from "@/lib/articles";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
-import Link from "next/link";
-import ArticleContent from "@/components/ArticleContent";
 import ArticlePageClient from "@/components/ArticlePageClient";
+import { injectHeadingIds } from "@/lib/html";
 
 type Params = { params: Promise<{ slug: string }> };
 
@@ -33,12 +32,23 @@ export default async function ArticlePage({ params }: Params) {
   if (!result) notFound();
 
   const { article, html } = result;
+  const htmlWithIds = injectHeadingIds(html);
+
   const allArticles = getAllArticles();
   const related = allArticles
     .filter((a) => a.slug !== slug && a.category === article.category)
     .slice(0, 3);
 
+  const seriesArticles = article.series
+    ? getArticlesBySeries(article.series).filter((a) => a.slug !== slug)
+    : [];
+
   return (
-    <ArticlePageClient article={article} html={html} related={related} />
+    <ArticlePageClient
+      article={article}
+      html={htmlWithIds}
+      related={related}
+      seriesArticles={seriesArticles}
+    />
   );
 }

@@ -4,10 +4,12 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { motion } from "framer-motion";
+import { useTheme } from "@/components/ThemeProvider";
 
 export default function Header() {
   const [query, setQuery] = useState("");
   const router = useRouter();
+  const { theme, toggle } = useTheme();
 
   function handleSearch(e: React.FormEvent) {
     e.preventDefault();
@@ -67,7 +69,24 @@ export default function Header() {
           <Link href="/search" className="hover:text-white transition-colors duration-200">
             検索
           </Link>
+          <Link href="/stats" className="hover:text-white transition-colors duration-200">
+            統計
+          </Link>
+          <Link href="/map" className="hover:text-white transition-colors duration-200">
+            思考地図
+          </Link>
         </nav>
+
+        {/* Dark mode toggle */}
+        <button
+          onClick={toggle}
+          className="flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center transition-colors"
+          style={{ background: "rgba(255,255,255,0.07)", color: "rgba(255,255,255,0.6)" }}
+          title={theme === "dark" ? "ライトモードへ" : "ダークモードへ"}
+          aria-label="テーマ切替"
+        >
+          {theme === "dark" ? "☀" : "◑"}
+        </button>
       </div>
     </motion.header>
   );

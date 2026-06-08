@@ -16,6 +16,29 @@
   --dark-border: rgba(255, 255, 255, 0.08);
 }
 
+/* ダークモード */
+[data-theme="dark"] {
+  --bg: #0f0f11;
+  --fg: #e8e8e6;
+  --muted: #9ca3af;
+  --accent: #818cf8;
+  --accent-light: #1e1e38;
+  --border: #2a2a2e;
+  --card-bg: #18181c;
+}
+
+/* 記事フォントサイズ（集中読書モード） */
+:root {
+  --article-font-size: 1rem;
+}
+
+/* 印刷スタイル */
+@media print {
+  header, footer, nav, .no-print { display: none !important; }
+  body { background: #fff !important; color: #000 !important; }
+  .article-body { font-size: 11pt; line-height: 1.7; }
+}
+
 * {
   box-sizing: border-box;
 }
@@ -83,3 +106,43 @@ h1, h2, h3, h4, h5, h6 {
   margin: 2rem 0;
 }
 .article-body strong { font-weight: 600; }
+
+/* 集中読書モード — フォントサイズを変数から適用 */
+.article-body {
+  font-size: var(--article-font-size, 1rem);
+}
+
+/* エピグラフ（巻頭引用）スタイル */
+.epigraph {
+  text-align: center;
+  font-style: italic;
+  font-family: 'Noto Serif JP', serif;
+  color: var(--muted);
+  margin: 0 auto 2.5rem;
+  max-width: 28rem;
+  padding: 1.5rem 0;
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+  line-height: 1.9;
+}
+.epigraph cite {
+  display: block;
+  font-size: 0.82rem;
+  margin-top: 0.75rem;
+  font-style: normal;
+  letter-spacing: 0.04em;
+}
+
+/* ダークモード記事内コード */
+[data-theme="dark"] .article-body code {
+  background: #2a2a2e;
+  color: #e8e8e6;
+}
+[data-theme="dark"] .article-body blockquote {
+  background: var(--accent-light);
+}
+
+/* カードの背景をCSS変数で管理 */
+[data-theme="dark"] .card-bg {
+  background: var(--card-bg);
+}

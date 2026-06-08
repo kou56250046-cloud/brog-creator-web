@@ -14,6 +14,9 @@ export type ArticleFrontmatter = {
   category: string;
   tags: string[];
   status: "draft" | "published";
+  epigraph?: string;
+  mood?: string;
+  series?: string;
 };
 
 export type Article = ArticleFrontmatter & {
@@ -53,6 +56,9 @@ export function getArticleBySlug(slug: string): Article | null {
     category: data.category ?? "",
     tags: data.tags ?? [],
     status: data.status ?? "draft",
+    epigraph: data.epigraph ?? undefined,
+    mood: data.mood ?? undefined,
+    series: data.series ?? undefined,
     content,
   };
 }
@@ -91,4 +97,15 @@ export function getAllTags(): string[] {
 
 export function getArticlesByCategory(category: string): ArticleMeta[] {
   return getAllArticles().filter((a) => a.category === category);
+}
+
+export function getArticlesBySeries(series: string): ArticleMeta[] {
+  return getAllArticles().filter((a) => a.series === series);
+}
+
+export function getSeriesList(): string[] {
+  const series = getAllArticles()
+    .map((a) => a.series)
+    .filter((s): s is string => !!s);
+  return [...new Set(series)];
 }
