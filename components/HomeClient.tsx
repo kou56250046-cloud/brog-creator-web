@@ -3,10 +3,13 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import ArticleCard from "@/components/ArticleCard";
+import StoryCard from "@/components/StoryCard";
 import type { ArticleMeta } from "@/lib/articles";
+import type { StoryMeta } from "@/lib/stories";
 
 type Props = {
   articles: ArticleMeta[];
+  stories: StoryMeta[];
 };
 
 /* ── マスクで下からスライドして現れるテキスト ── */
@@ -61,7 +64,8 @@ const CONCEPTS = [
   },
 ];
 
-export default function HomeClient({ articles }: Props) {
+export default function HomeClient({ articles, stories }: Props) {
+  const [contentType, setContentType] = useState<"articles" | "stories">("articles");
   const [activeCategory, setActiveCategory] = useState<string | null>(null);
   const filtered = activeCategory
     ? articles.filter((a) => a.category === activeCategory)
@@ -219,13 +223,13 @@ export default function HomeClient({ articles }: Props) {
                 className="text-xs tracking-[0.35em] uppercase font-medium"
                 style={{ color: "var(--accent)" }}
               >
-                Latest Articles
+                {contentType === "articles" ? "Latest Articles" : "Short Stories"}
               </span>
               <h2
                 className="mt-2 text-3xl sm:text-4xl font-bold"
                 style={{ fontFamily: "'Noto Serif JP', serif" }}
               >
-                最新の記事
+                {contentType === "articles" ? "最新の記事" : "短編小説"}
               </h2>
             </motion.div>
 
@@ -239,79 +243,141 @@ export default function HomeClient({ articles }: Props) {
             />
           </div>
 
-          {/* カテゴリフィルタータブ */}
+          {/* コンテンツタイプ切り替えタブ */}
           <motion.div
             initial={{ opacity: 0, y: 12 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            transition={{ duration: 0.5 }}
-            className="flex flex-wrap gap-2 mb-10"
+            transition={{ duration: 0.4 }}
+            className="flex gap-1 mb-8 p-1 rounded-full w-fit"
+            style={{ background: "var(--border)" }}
           >
             <button
-              onClick={() => setActiveCategory(null)}
-              className="px-4 py-1.5 rounded-full text-sm font-medium border transition-all"
+              onClick={() => { setContentType("articles"); setActiveCategory(null); }}
+              className="px-5 py-1.5 rounded-full text-sm font-medium transition-all duration-200"
               style={
-                activeCategory === null
-                  ? { background: "var(--accent)", color: "#fff", borderColor: "var(--accent)" }
-                  : { background: "transparent", color: "var(--muted)", borderColor: "var(--border)" }
+                contentType === "articles"
+                  ? { background: "var(--card-bg)", color: "var(--fg)", boxShadow: "0 1px 3px rgba(0,0,0,0.1)" }
+                  : { background: "transparent", color: "var(--muted)" }
               }
             >
-              すべて
+              記事
             </button>
-            {CATEGORIES.map((cat) => (
+            <button
+              onClick={() => { setContentType("stories"); setActiveCategory(null); }}
+              className="px-5 py-1.5 rounded-full text-sm font-medium transition-all duration-200"
+              style={
+                contentType === "stories"
+                  ? { background: "var(--card-bg)", color: "#7c3aed", boxShadow: "0 1px 3px rgba(0,0,0,0.1)" }
+                  : { background: "transparent", color: "var(--muted)" }
+              }
+            >
+              小説
+            </button>
+          </motion.div>
+
+          {/* カテゴリフィルタータブ（記事タブのみ表示） */}
+          {contentType === "articles" && (
+            <motion.div
+              initial={{ opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.3 }}
+              className="flex flex-wrap gap-2 mb-10"
+            >
               <button
-                key={cat}
-                onClick={() => setActiveCategory(cat === activeCategory ? null : cat)}
-                className="px-4 py-1.5 rounded-full text-sm font-medium border transition-all hover:border-[var(--accent)] hover:text-[var(--accent)]"
+                onClick={() => setActiveCategory(null)}
+                className="px-4 py-1.5 rounded-full text-sm font-medium border transition-all"
                 style={
-                  activeCategory === cat
+                  activeCategory === null
                     ? { background: "var(--accent)", color: "#fff", borderColor: "var(--accent)" }
                     : { background: "transparent", color: "var(--muted)", borderColor: "var(--border)" }
                 }
               >
-                {cat}
+                すべて
               </button>
-            ))}
-          </motion.div>
+              {CATEGORIES.map((cat) => (
+                <button
+                  key={cat}
+                  onClick={() => setActiveCategory(cat === activeCategory ? null : cat)}
+                  className="px-4 py-1.5 rounded-full text-sm font-medium border transition-all hover:border-[var(--accent)] hover:text-[var(--accent)]"
+                  style={
+                    activeCategory === cat
+                      ? { background: "var(--accent)", color: "#fff", borderColor: "var(--accent)" }
+                      : { background: "transparent", color: "var(--muted)", borderColor: "var(--border)" }
+                  }
+                >
+                  {cat}
+                </button>
+              ))}
+            </motion.div>
+          )}
 
-          {/* 記事グリッド */}
-          {articles.length === 0 ? (
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.4 }}
-              className="text-center py-24"
-              style={{ color: "var(--muted)" }}
-            >
-              <p className="text-lg mb-2">まだ記事がありません</p>
-              <p className="text-sm">チャットで最初の記事を作成しましょう</p>
-            </motion.div>
-          ) : filtered.length === 0 ? (
-            <motion.div
-              key="empty"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              className="text-center py-24"
-              style={{ color: "var(--muted)" }}
-            >
-              <p className="text-sm">このカテゴリの記事はまだありません</p>
-            </motion.div>
-          ) : (
-            <AnimatePresence mode="wait">
+          {/* コンテンツグリッド */}
+          <AnimatePresence mode="wait">
+            {contentType === "articles" ? (
+              articles.length === 0 ? (
+                <motion.div
+                  key="articles-empty-all"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ delay: 0.4 }}
+                  className="text-center py-24"
+                  style={{ color: "var(--muted)" }}
+                >
+                  <p className="text-lg mb-2">まだ記事がありません</p>
+                  <p className="text-sm">チャットで最初の記事を作成しましょう</p>
+                </motion.div>
+              ) : filtered.length === 0 ? (
+                <motion.div
+                  key="articles-empty-cat"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  className="text-center py-24"
+                  style={{ color: "var(--muted)" }}
+                >
+                  <p className="text-sm">このカテゴリの記事はまだありません</p>
+                </motion.div>
+              ) : (
+                <motion.div
+                  key={activeCategory ?? "articles-all"}
+                  initial={{ opacity: 0, y: 12 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -8 }}
+                  transition={{ duration: 0.3 }}
+                  className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3"
+                >
+                  {filtered.map((article, i) => (
+                    <ArticleCard key={article.slug} article={article} index={i} />
+                  ))}
+                </motion.div>
+              )
+            ) : stories.length === 0 ? (
               <motion.div
-                key={activeCategory ?? "all"}
+                key="stories-empty"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.4 }}
+                className="text-center py-24"
+                style={{ color: "var(--muted)" }}
+              >
+                <p className="text-lg mb-2">まだ小説がありません</p>
+                <p className="text-sm">チャットで「/story」と入力して小説を作成しましょう</p>
+              </motion.div>
+            ) : (
+              <motion.div
+                key="stories-all"
                 initial={{ opacity: 0, y: 12 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -8 }}
                 transition={{ duration: 0.3 }}
                 className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3"
               >
-                {filtered.map((article, i) => (
-                  <ArticleCard key={article.slug} article={article} index={i} />
+                {stories.map((story, i) => (
+                  <StoryCard key={story.slug} story={story} index={i} />
                 ))}
               </motion.div>
-            </AnimatePresence>
-          )}
+            )}
+          </AnimatePresence>
         </div>
       </section>
 
